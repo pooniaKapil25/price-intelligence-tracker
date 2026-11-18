@@ -1,0 +1,26 @@
+# Python bytecode and local environment
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+.api.env
+apikey.env
+
+# Streamlit local secrets
+.streamlit/secrets.toml
+
+# Local databases and generated files
+*.db
+*.sqlite
+*.sqlite3
+
+# Tool and OS files
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+*.textClipping
