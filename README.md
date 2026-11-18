@@ -190,9 +190,11 @@ These images were captured from the running Streamlit application using the exis
 | --- | --- |
 | ![PTI analytics and price chart](docs/screenshots/analytics.png) | ![PTI saved price history](docs/screenshots/price-history.png) |
 
-![PTI simulated demo price](docs/screenshots/demo-mode.png)
+| Demo comparison | Existing simulated price check |
+| --- | --- |
+| ![PTI simulated demo price comparison](docs/screenshots/demo-price-comparison.png) | ![PTI simulated demo price check](docs/screenshots/demo-mode.png) |
 
-An empty Rewalto-search screenshot is not included: producing that screen would require submitting a search, and this verification run is restricted from making live Rewalto requests. No search result or comparison has been fabricated.
+The comparison screenshot shows simulated sample data only; it does not represent live Rewalto prices. No Rewalto search was made to capture these screenshots.
 
 ## Known limitations and current verification
 
@@ -207,7 +209,7 @@ An empty Rewalto-search screenshot is not included: producing that screen would 
 
 ## GitHub and secrets
 
-`.gitignore` excludes local environment files, API-key files, databases, virtual environments, Python bytecode, test caches, and operating-system metadata. `.env.example` contains only local defaults and an empty API-key setting. Keep credentials in a local ignored file or environment variable. Git has been initialized locally with no commits, so there was no earlier Git history to inspect. No files were committed or pushed, and no deployment or upload was performed.
+`.gitignore` excludes local environment files, API-key files, databases, virtual environments, Python bytecode, test caches, and operating-system metadata. `.env.example` contains only local defaults and an empty API-key setting. Keep credentials in a local ignored file or environment variable; never commit or publish them. The project source and presentation screenshots are maintained in the [PTI GitHub repository](https://github.com/pooniaKapil25/price-intelligence-tracker). The application has not been deployed.
 
 ## Future improvements
 

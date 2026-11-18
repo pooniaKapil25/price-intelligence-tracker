@@ -542,9 +542,9 @@ demo_df = pd.DataFrame([
 ])
 lowest_price = demo_summary["lowest_price"]
 st.dataframe(
-    demo_df.style.apply(
+    demo_df.style.format({"Price (₹)": "₹{:.2f}"}).apply(
         lambda row: [
-            "background-color: #d9f2dd; font-weight: bold"
+            "background-color: #d9f2dd; color: #111111; font-weight: bold"
             if row["Price (₹)"] == lowest_price else ""
             for _ in row
         ],
