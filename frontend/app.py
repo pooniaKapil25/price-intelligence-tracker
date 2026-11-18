@@ -513,50 +513,58 @@ st.divider()
 # SIMULATED DEMO COMPARISON
 # ==========================================
 
-st.subheader("Demo Price Comparison")
-st.warning("SIMULATED DEMO DATA — NOT LIVE RETAILER PRICES")
-demo_listings = get_demo_listings()
-demo_summary = calculate_demo_summary(demo_listings)
+st.subheader("Demo Mode")
+demo_mode_enabled = st.checkbox(
+    "Show simulated demo comparison",
+    value=False,
+    help="Display a fixed Amul sample comparison, separate from live search results.",
+)
 
-lowest_col, highest_col, savings_col = st.columns(3)
-lowest_col.metric(
-    "Lowest price",
-    f"₹{demo_summary['lowest_price']:.2f}",
-    demo_summary["lowest_retailer"],
-)
-highest_col.metric("Highest price", f"₹{demo_summary['highest_price']:.2f}")
-savings_col.metric("Savings", f"₹{demo_summary['savings']:.2f}")
+if demo_mode_enabled:
+    st.subheader("Demo Price Comparison")
+    st.warning("SIMULATED DEMO DATA — NOT LIVE RETAILER PRICES")
+    demo_listings = get_demo_listings()
+    demo_summary = calculate_demo_summary(demo_listings)
 
-demo_df = pd.DataFrame([
-    {
-        "Retailer": item["retailer"],
-        "Product": item["product"],
-        "Price (₹)": item["price"],
-        "Currency": item["currency"],
-        "PIN": item["pincode"],
-        "Availability": item["availability"],
-        "Observed at": item["observed_at"],
-        "Data type": item["source"],
-    }
-    for item in demo_listings
-])
-lowest_price = demo_summary["lowest_price"]
-st.dataframe(
-    demo_df.style.format({"Price (₹)": "₹{:.2f}"}).apply(
-        lambda row: [
-            "background-color: #d9f2dd; color: #111111; font-weight: bold"
-            if row["Price (₹)"] == lowest_price else ""
-            for _ in row
-        ],
-        axis=1,
-    ),
-    width="stretch",
-    hide_index=True,
-)
-st.caption(
-    "This fixed sample is displayed locally only. It is separate from live "
-    "Rewalto results and is never saved to tracked products or price history."
-)
+    lowest_col, highest_col, savings_col = st.columns(3)
+    lowest_col.metric(
+        "Lowest price",
+        f"₹{demo_summary['lowest_price']:.2f}",
+        demo_summary["lowest_retailer"],
+    )
+    highest_col.metric("Highest price", f"₹{demo_summary['highest_price']:.2f}")
+    savings_col.metric("Savings", f"₹{demo_summary['savings']:.2f}")
+
+    demo_df = pd.DataFrame([
+        {
+            "Retailer": item["retailer"],
+            "Product": item["product"],
+            "Price (₹)": item["price"],
+            "Currency": item["currency"],
+            "PIN": item["pincode"],
+            "Availability": item["availability"],
+            "Observed at": item["observed_at"],
+            "Data type": item["source"],
+        }
+        for item in demo_listings
+    ])
+    lowest_price = demo_summary["lowest_price"]
+    st.dataframe(
+        demo_df.style.format({"Price (₹)": "₹{:.2f}"}).apply(
+            lambda row: [
+                "background-color: #d9f2dd; color: #111111; font-weight: bold"
+                if row["Price (₹)"] == lowest_price else ""
+                for _ in row
+            ],
+            axis=1,
+        ),
+        width="stretch",
+        hide_index=True,
+    )
+    st.caption(
+        "This fixed sample is displayed locally only. It is separate from live "
+        "Rewalto results and is never saved to tracked products or price history."
+    )
 
 st.divider()
 
