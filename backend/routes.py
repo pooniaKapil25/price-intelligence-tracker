@@ -74,7 +74,9 @@ def external_product_search(
         products = []
 
         for item in result.get("data", []):
-            latest = item.get("latest") or {}
+            latest = item.get("latest")
+            if not isinstance(latest, dict):
+                latest = {}
             price_minor = latest.get("priceMinor")
             valid_price = (
                 latest.get("state") == "priced"

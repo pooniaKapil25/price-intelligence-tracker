@@ -22,6 +22,13 @@ def test_product_creation_requires_positive_initial_price(client):
     assert created.status_code == 422
     assert "positive initial price is required" in created.text.lower()
 
+    whitespace_name = client.post("/products", json={
+        "name": "   ",
+        "product_url": "https://example.com/blank-name-test",
+        "current_price": 10,
+    })
+    assert whitespace_name.status_code == 422
+
     created = client.post("/products", json={
         "name": "Null price test item",
         "product_url": "https://example.com/null-price-test",
@@ -32,12 +39,13 @@ def test_product_creation_requires_positive_initial_price(client):
 
 def test_positive_price_product_crud_saves_only_positive_initial_history(client):
     created = client.post("/products", json={
-        "name": "CRUD test item",
+        "name": "  CRUD test item  ",
         "product_url": "https://example.com/crud-test",
         "current_price": 120.0,
     })
     assert created.status_code == 201
     product = created.json()
+    assert product["name"] == "CRUD test item"
     assert product["current_price"] == 120.0
     product_id = product["id"]
     listed_products = client.get("/products")
@@ -211,6 +219,15 @@ def test_external_search_maps_price_and_preserves_canonical_product_id(client, m
 def test_invalid_or_unknown_minor_prices_remain_unknown(client, monkeypatch, latest):
     monkeypatch.setattr(routes, "search_products", lambda **kwargs: {
         "data": [{"id": "listing-x", "title": "Sample product", "latest": latest}],
+    })
+    response = client.get("/products/external-search", params={"q": "sample"})
+    assert response.status_code == 200
+    assert response.json()["data"][0]["price"] is None
+
+
+def test_malformed_latest_price_shape_remains_an_unknown_price(client, monkeypatch):
+    monkeypatch.setattr(routes, "search_products", lambda **kwargs: {
+        "data": [{"id": "listing-x", "title": "Sample product", "latest": []}],
     })
     response = client.get("/products/external-search", params={"q": "sample"})
     assert response.status_code == 200

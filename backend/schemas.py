@@ -15,6 +15,12 @@ class ProductCreate(BaseModel):
     # confirmed positive initial price until the schema supports unknowns.
     current_price: float = Field(gt=0, allow_inf_nan=False)
 
+    @field_validator("name", mode="before")
+    @classmethod
+    def trim_name(cls, value):
+        """Normalize product names and reject whitespace-only input."""
+        return value.strip() if isinstance(value, str) else value
+
     @model_validator(mode="before")
     @classmethod
     def require_initial_price(cls, value):

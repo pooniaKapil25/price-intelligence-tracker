@@ -70,20 +70,25 @@ flowchart LR
 │   ├── routes.py            # Product, price, and external-search endpoints
 │   ├── schemas.py           # Pydantic validation and response schemas
 │   └── services/
-│       ├── demo_fetcher.py  # Simulated sample price source
-│       ├── price_fetcher.py # Price-source interface
-│       ├── rewalto_client.py # Rewalto HTTP client and safe error handling
-│       └── *_test.py        # Explicit operator-run Rewalto checks
+│       ├── demo_fetcher.py      # Simulated per-product sample price source
+│       ├── price_fetcher.py     # Price-source interface
+│       ├── product_relevance.py # Conservative listing-category checks
+│       ├── rewalto_client.py    # Rewalto HTTP client and safe error handling
+│       └── *_test.py            # Explicit operator-run Rewalto checks
 ├── frontend/
-│   ├── app.py               # Streamlit dashboard
-│   └── comparison.py        # Price, location, freshness, and identity checks
+│   ├── app.py                # Streamlit dashboard and separate Demo Mode toggle
+│   ├── comparison.py         # Price, location, freshness, and identity checks
+│   └── demo_comparison.py    # Fixed simulated comparison rows and calculations
 ├── docs/
 │   └── screenshots/         # Genuine screenshots of the running dashboard
 └── tests/
     ├── conftest.py          # Uses and removes a disposable database copy
     ├── test_api.py          # Mocked API and product-flow tests
     ├── test_comparison.py   # Pure comparison-validation tests
-    └── test_rewalto_client.py # Mocked Rewalto client tests
+    ├── test_demo_comparison.py # Demo calculation and separation tests
+    ├── test_product_relevance.py # Product-category checks
+    ├── test_rewalto_client.py # Mocked Rewalto client tests
+    └── test_streamlit_demo_mode.py # Demo toggle visibility test
 ```
 
 The local `.venv/`, SQLite file, `.env` files, bytecode, and test caches are not part of the project source.
@@ -155,7 +160,7 @@ PTI does not treat an exact brand filter, Rewalto match kind, or semantic simila
 
 ### Demo Price Comparison
 
-The fixed sample compares Amul Taaza Toned Milk, 1 L at Blinkit (₹65), Zepto (₹62), and Instamart (₹68). It reports the lowest and highest prices and the ₹6 difference, with Zepto highlighted as the lowest. The section is labeled `SIMULATED DEMO DATA — NOT LIVE RETAILER PRICES`. Its rows are created locally for display only: they are not Rewalto results, tracked products, or SQLite price-history observations. The sample PIN, availability, and observation time are also simulated and do not describe current retailer coverage.
+The fixed sample compares Amul Taaza Toned Milk, 1 L at Blinkit (₹65), Zepto (₹62), and Instamart (₹68). It reports the lowest and highest prices and the ₹6 difference, with Zepto highlighted as the lowest. It appears only after the user enables **Show simulated demo comparison** in the separate **Demo Mode** section; the checkbox is off by default. The comparison is labeled `SIMULATED DEMO DATA — NOT LIVE RETAILER PRICES`. Its rows are created locally for display only: they are not Rewalto results, tracked products, or SQLite price-history observations. The sample PIN, availability, and observation time are also simulated and do not describe current retailer coverage.
 
 ## Database
 

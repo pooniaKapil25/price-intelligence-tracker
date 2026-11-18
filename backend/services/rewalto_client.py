@@ -80,9 +80,13 @@ def _request_json(path: str, *, params: dict[str, Any] | None = None, timeout: i
         raise RewaltoError(error_code or "upstream_error", status_code)
 
     try:
-        return response.json()
+        payload = response.json()
     except (ValueError, requests.exceptions.JSONDecodeError) as exc:
         raise RewaltoError("invalid_response", status_code) from exc
+
+    if not isinstance(payload, dict):
+        raise RewaltoError("invalid_response", status_code)
+    return payload
 
 
 def check_connection():
@@ -112,7 +116,13 @@ def search_products(
         params["brand"] = brand
     if mode != "words":
         params["mode"] = mode
-    return _request_json("/v1/data/listings/search", params=params, timeout=30)
+    payload = _request_json("/v1/data/listings/search", params=params, timeout=30)
+    listings = payload.get("data")
+    if not isinstance(listings, list) or any(
+        not isinstance(listing, dict) for listing in listings
+    ):
+        raise RewaltoError("invalid_response")
+    return payload
 
 
 def get_retailers():

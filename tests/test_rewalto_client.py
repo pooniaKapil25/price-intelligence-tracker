@@ -9,7 +9,7 @@ class FakeResponse:
     def __init__(self, status_code, *, headers=None, payload=None):
         self.status_code = status_code
         self.headers = headers or {}
-        self.payload = payload or {"data": []}
+        self.payload = {"data": []} if payload is None else payload
 
     def json(self):
         return self.payload
@@ -136,3 +136,25 @@ def test_word_search_uses_rewalto_documented_default_without_mode_parameter(monk
     rewalto_client.search_products("Amul milk", mode="words")
     assert captured["params"]["q"] == "Amul milk"
     assert "mode" not in captured["params"]
+
+
+@pytest.mark.parametrize("payload", [
+    [],
+    {"data": None},
+    {"data": [{"id": "valid"}, "not-a-listing"]},
+])
+def test_malformed_success_payload_is_reported_as_safe_upstream_error(monkeypatch, payload):
+    monkeypatch.setattr(
+        rewalto_client.settings,
+        "rewalto_api_key",
+        SecretStr("unit-test-only-value"),
+    )
+    monkeypatch.setattr(
+        rewalto_client.requests,
+        "get",
+        lambda *args, **kwargs: FakeResponse(200, payload=payload),
+    )
+
+    with pytest.raises(RewaltoError) as error:
+        rewalto_client.search_products("tea")
+    assert error.value.code == "invalid_response"
